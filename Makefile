@@ -4,24 +4,15 @@ CC = cc
 
 CFLAGS = -Wall -Wextra -Werror -pthread
 
-SRC_COMMON = *.c
-
-SRC_PUSH = main.c
-
-OBJ_COMMON = $(SRC_COMMON:.c=.o)
-
-OBJ_PUSH = $(SRC_PUSH.c=.o)
+SRC_COMMON = main.c parcing1.c parcing2.c
 
 all: $(NAME)
 
-$(NAME): $(OBJ_COMMON) $(OBJ_PUSH)
-	$(CC) $(CFLAGS) $(OBJ_COMMON) $(OBJ_PUSH) -o $(NAME)
-
-%.o: %.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+$(NAME): $(SRC_COMMON) $(SRC_PUSH)
+	$(CC) $(CFLAGS) $(SRC_COMMON) -o $(NAME)
 
 clean:
-	rm -f $(OBJ_COMMON) $(OBJ_PUSH)
+	rm -f $(SRC_COMMON) $(SRC_PUSH)
 
 fclean: clean
 	rm -f $(NAME)
