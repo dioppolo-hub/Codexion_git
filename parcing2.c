@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parcing2.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: diego <diego@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/25 10:43:25 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/06/25 11:33:03 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/07/01 16:02:01 by diego            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,10 @@ bool parce_t_refactor(char *t_refactor)
 {
 	long int x;
 
+	if (!is_valid_int(t_refactor, true))
+		return false;
 	x = atoi(t_refactor);
-	if (x <= 0)
+	if (x < 0)
 		return false;
 	else if (x > INT_MAX)
 		return false;
@@ -29,6 +31,8 @@ bool parce_n_comp(char *n_comp)
 {
 	long int x;
 
+	if (!is_valid_int(n_comp, false))
+		return false;
 	x = atoi(n_comp);
 	if (x <= 0)
 		return false;
@@ -42,8 +46,10 @@ bool parce_dongle_cool(char *d_cooldown)
 {
 	long int x;
 
+	if (!is_valid_int(d_cooldown, true))
+		return false;
 	x = atoi(d_cooldown);
-	if (x <= 0)
+	if (x < 0)
 		return false;
 	else if (x > INT_MAX)
 		return false;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   codexion.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: diego <diego@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/25 10:04:17 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/06/25 11:14:57 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/07/01 15:57:30 by diego            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,5 +30,7 @@ bool parce_t_refactor(char *t_refactor);
 bool parce_n_comp(char *n_comp);
 bool parce_dongle_cool(char *d_cooldown);
 bool parce_scheduler(char *scheduler);
+bool is_valid_int(char *str, bool allow_zero);
+
 
 #endif

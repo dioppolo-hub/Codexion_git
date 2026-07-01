@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parcing1.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: diego <diego@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/25 10:09:14 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/06/25 11:32:53 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/07/01 16:01:51 by diego            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ bool parce_n_coders(char *n_coder)
 {
 	long int x;
 
+	if (!is_valid_int(n_coder, false))
+		return false;
 	x = atoi(n_coder);
 	if (x <= 0)
 		return false;
@@ -29,6 +31,8 @@ bool parce_t_burnout(char *t_burnout)
 {
 	long int x;
 
+	if (!is_valid_int(t_burnout, false))
+		return false;
 	x = atoi(t_burnout);
 	if (x <= 0)
 		return false;
@@ -42,6 +46,8 @@ bool parce_t_compile(char *t_compile)
 {
 	long int x;
 
+	if (!is_valid_int(t_compile, false))
+		return false;
 	x = atoi(t_compile);
 	if (x <= 0)
 		return false;
@@ -55,8 +61,10 @@ bool parce_t_debug(char *t_debug)
 {
 	long int x;
 
+	if(!is_valid_int(t_debug, true))
+		return false;
 	x = atoi(t_debug);
-	if (x <= 0)
+	if (x < 0)
 		return false;
 	else if (x > INT_MAX)
 		return false;
