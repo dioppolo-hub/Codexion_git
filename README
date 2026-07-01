@@ -1,1 +1,52 @@
 ./codexion 2 800 200 200 200 1 150 fifo
+
+
+SCALETTA DA STUDIARE:
+1. Struttura dati Binary Heap
+	studiare la priority queue
+2. Sincronizzazione Avanzata: Mutex e Condition
+	Uso di pthread
+3. Gestione del Tempo (gettimeofday)
+	funzione helper per il timestamp in ms
+	formula t_ms = (tv.tv_sec * 1000) + (tv.tv_usec/1000)
+
+
+SCALETTA PROGETTO:
+-Strutture principali nel .h:
+	-t_dongle: Deve contenere un mutex, 
+	 una condition variable, il timestamp in cui tornerà
+	 disponibile (a causa del cooldown), e una Priority Queue
+	 associata per gestire i coder in attesa di quel dongle.
+	-t_coder: ID, numero di compilazioni effettuate,
+	 timestamp dell'ultima compilazione, scadenze,
+	 e i puntatori ai due dongle (sinistro e destro).
+	-t_env / t_data: Una struttura generale che
+	 contiene i parametri di configurazione, lo stato della
+	 simulazione (se è finita o no), un mutex globale per
+	 la stampa (printf) e gli array di coder e dongle.
+
+-Implemento Heap Custom:
+	-funzioni push() e pop() e confronto tra nodi (caso fifo e edf)
+
+-Stampa protetta e Gestione del Tempo:
+	-funzione log_status(t_coder *coder, char *status) che blocca
+	 un mutex prende il time e stampa il formato richiesto
+
+-Routine del coder:
+	-prendi i dongle, il coder si inserisce nell'heap e aspetta con
+	 pthread_cond_wait finché non è il suo turno e d_cooldown è terminato
+	-Compila, usleep(t_compile * 1000), aggiorna timestamp di compilazione
+	-Rilascia i dongle: imposta timestamp di sblocco = (curr_time + d_cooldown)
+	 e "sveglia" gli altri fili con pthread_cond_broadcast
+	-Debug e Refactor: usleep per i rispettivi tempi
+
+-Thread Monitor:
+	-Crea un Thread separato che fa piccoli usleep di 1-2 ms,
+	 deve controllare:
+	 1. Se il curr_time ha superato la deadline di burnout
+	 2. Se succede stampa il log del burnout e fa fermare tutti i Thread
+
+-Main, pulizia e free:
+	-Inizializza le Strutture, lancia i thread dei coder,
+	 lancia il monitor, fai il pthread_join quando finisce la simulazione,
+	 distruggi tutti i mutex e le condition variables
