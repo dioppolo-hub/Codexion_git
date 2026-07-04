@@ -6,7 +6,7 @@
 /*   By: diego <diego@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/25 10:04:17 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/07/01 15:57:30 by diego            ###   ########.fr       */
+/*   Updated: 2026/07/04 14:31:16 by diego            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,40 @@
 # include <pthread.h>
 # include <limits.h>
 # include <string.h>
+
+typedef struct s_dongle {
+	pthread_mutex_t mutex;
+	pthread_cond_t cond;
+	int id;
+	long long last_released_time; //Per gestire il cooldown
+	// Coda di priorità (heap) per gestire le richieste FIFO/EDF
+	struct s_request_queue *queue;
+} t_dongle;
+
+typedef struct s_env {
+	int num_coders;
+	long long t_burnout;
+	long long t_compile;
+	long long t_refactor;
+	int req_compiles;
+	long long cooldown;
+	int scheduler_type; // 0 per FIFO, 1 per EDF
+	long long start_tipe;
+	pthread_mutex_t write_mutex; //mutex per non accavallare i printf
+	int simulation_running; //flag per bloccare tutto
+	pthread_mutex_t sim_mutex;
+	t_dongle *dongles; //array di dongle
+} t_env;
+
+typedef struct s_coder {
+	int id;
+	int compile_count;
+	long long last_compile_start;
+	t_env *env;
+	t_dongle *left_dongle;
+	t_dongle *right_dongle;
+} t_coder;
+
 
 bool parcing_1(int argc, char** argv);
 bool parce_n_coders(char *n_coder);
