@@ -6,7 +6,7 @@
 /*   By: diego <diego@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/25 10:04:17 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/07/04 14:31:16 by diego            ###   ########.fr       */
+/*   Updated: 2026/07/18 14:54:43 by diego            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,18 +21,31 @@
 # include <limits.h>
 # include <string.h>
 
+typedef struct s_request {
+	int coder_id;
+	long long request_time;
+	long long deadline;
+} t_request;
+
+typedef struct s_heap {
+	t_request *request;
+	int size;
+	int capacity;
+} t_heap;
+
 typedef struct s_dongle {
 	pthread_mutex_t mutex;
 	pthread_cond_t cond;
 	int id;
 	long long last_released_time; //Per gestire il cooldown
 	// Coda di priorità (heap) per gestire le richieste FIFO/EDF
-	struct s_request_queue *queue;
+	t_heap heap;
 } t_dongle;
 
 typedef struct s_env {
 	int num_coders;
 	long long t_burnout;
+	long long t_debug;
 	long long t_compile;
 	long long t_refactor;
 	int req_compiles;
