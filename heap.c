@@ -6,7 +6,7 @@
 /*   By: diego <diego@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/18 14:55:55 by diego             #+#    #+#             */
-/*   Updated: 2026/07/18 16:22:55 by diego            ###   ########.fr       */
+/*   Updated: 2026/07/20 15:11:24 by diego            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,50 @@ static int compare_requests(t_request a, t_request b, int scheduler_type)
 	return (a.coder_id < b.coder_id);
 }
 
+//Spinge un elemento verso l'alto nell'heap finché non trova la sua
+//posizione corretta per rispettare la priorità
+static void heapify_up(t_heap *heap, int i, int scheduler_type)
+{
+	int parent;
+	t_request tmp;
+
+	while (i > 0)
+	{
+		parent = (i - 1) / 2;
+		if (compare_requests(heap->request[i], heap->request[parent], scheduler_type))
+		{
+			tmp = heap->request[i];
+			heap->request[i] = heap->request[parent];
+			heap->request[parent] = tmp;
+			i = parent;
+		}
+		else
+			break;
+	}
+}
+
+//Spinge un elemento verso il basso nell'heap confrontandolo
+//con i suoi figli.
+static void heapify_down(t_heap *heap, int i, int scheduler_type)
+{
+	int child;
+	t_request tmp;
+
+	while (2 * i + 1 < heap->size)
+	{
+		child = 2 * i + 1;
+		if (compare_requests(heap->request[i], heap->request[child], scheduler_type))
+		{
+			tmp = heap->request[i];
+			heap->request[i] = heap->request[child];
+			heap->request[child] = tmp;
+			i = child;
+		}
+		else
+			break;
+	}
+}
+
 //alloca memoria in base al numero di coders
 void heap_init(t_heap *heap, int capacity)
 {
@@ -44,73 +88,24 @@ void heap_init(t_heap *heap, int capacity)
 //inserisce una nuova richiesta nell'heap
 void heap_push(t_heap *heap, t_request req, int scheduler_type)
 {
-	int i;
-	int parent;
-	t_request tmp;
-
 	if (heap->size >= heap->capacity)
-		return; //struttura piena
-	//inserisco il nuovo elemento alla fine dell'array
-	i = heap->size;
-	heap->request[i] = req;
+		return;
+	heap->request[heap->size] = req;
 	heap->size++;
-	//sposta l'elemento verso l'alto finché ha priorità
-	while (i > 0)
-	{
-		parent = (i - 1) / 2;
-		//se la richiesta ha più priorità del padre, scambiale
-		if (compare_requests(heap->request[i], heap->request[parent], scheduler_type))
-		{
-			tmp = heap->request[i];
-			heap->request[i] = heap->request[parent];
-			heap->request[parent] = tmp;
-			i = parent; //mi salvo l'indice del padre
-		}
-		else
-			break;
-	}
+	heapify_up(heap, heap->size - 1, scheduler_type);
 }
 
 //rimuove e restituisce la richiesta in cima
 t_request heap_pop(t_heap *heap, int scheduler_type)
 {
 	t_request top;
-	t_request tmp;
-	int i;
-	int left;
-	int right;
-	int smallest;
 
-	top = heap->request[0]; //elemento in cima da restituire
+	top = heap->request[0];
 	heap->size--;
 	if (heap->size > 0)
 	{
-		//ultimo elemento in cima
 		heap->request[0] = heap->request[heap->size];
-		i = 0;
-		//sposta l'elemento verso il basso
-		while (1)
-		{
-			left = 2 * i + 1;
-			right = 2 * i + 2;
-			smallest = i;
-			//check priorità figlio sinistro
-			if (left < heap->size && compare_requests(heap->request[left], heap->request[smallest], scheduler_type))
-				smallest = left;
-			//check priorità figlio destro
-			if (right < heap->size && compare_requests(heap->request[right], heap->request[smallest], scheduler_type))
-				smallest = right;
-			//se il nodo corrente ha già priorità esci
-			if (smallest != i)
-			{
-				tmp = heap->request[i];
-				heap->request[i] = heap->request[smallest];
-				heap->request[smallest] = tmp;
-				i = smallest;
-			}
-			else
-				break;
-		}
+		heapify_down(heap, 0, scheduler_type);
 	}
 	return (top);
 }
