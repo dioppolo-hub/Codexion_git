@@ -6,7 +6,7 @@
 /*   By: diego <diego@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/18 14:55:55 by diego             #+#    #+#             */
-/*   Updated: 2026/07/20 15:11:24 by diego            ###   ########.fr       */
+/*   Updated: 2026/07/22 16:34:49 by diego            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,11 +55,15 @@ static void heapify_up(t_heap *heap, int i, int scheduler_type)
 static void heapify_down(t_heap *heap, int i, int scheduler_type)
 {
 	int child;
+	int left;
+	int right;
 	t_request tmp;
 
-	while (2 * i + 1 < heap->size)
+	while ((left = 2 * i + 1) < heap->size)
 	{
-		child = 2 * i + 1;
+		right = left + 1;
+		child = left;
+		if (right < heap->size && compare_requests(heap->request[right], heap->request[left], scheduler_type))
 		if (compare_requests(heap->request[i], heap->request[child], scheduler_type))
 		{
 			tmp = heap->request[i];
@@ -114,4 +118,13 @@ t_request heap_pop(t_heap *heap, int scheduler_type)
 t_request heap_peek(t_heap *heap)
 {
 	return (heap->request[0]);
+}
+
+void heap_clear(t_heap *heap)
+{
+	if (heap->request)
+		free(heap->request);
+	heap->request = NULL;
+	heap->size = 0;
+	heap->capacity = 0;
 }

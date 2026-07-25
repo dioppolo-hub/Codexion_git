@@ -4,7 +4,7 @@ CC = cc
 
 CFLAGS = -Wall -Wextra -Werror -pthread
 
-SRC_COMMON = main.c parcing1.c parcing2.c parcing_atoi.c
+SRC_COMMON = main.c parcing1.c parcing2.c parcing_atoi.c heap.c utils.c
 
 all: $(NAME)
 
