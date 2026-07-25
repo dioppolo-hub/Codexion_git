@@ -6,7 +6,7 @@
 /*   By: diego <diego@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/18 14:55:55 by diego             #+#    #+#             */
-/*   Updated: 2026/07/22 16:34:49 by diego            ###   ########.fr       */
+/*   Updated: 2026/07/25 15:01:22 by diego            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ static void heapify_down(t_heap *heap, int i, int scheduler_type)
 		right = left + 1;
 		child = left;
 		if (right < heap->size && compare_requests(heap->request[right], heap->request[left], scheduler_type))
+			child = right;
 		if (compare_requests(heap->request[i], heap->request[child], scheduler_type))
 		{
 			tmp = heap->request[i];

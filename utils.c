@@ -6,7 +6,7 @@
 /*   By: diego <diego@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/25 14:02:03 by diego             #+#    #+#             */
-/*   Updated: 2026/07/25 14:32:11 by diego            ###   ########.fr       */
+/*   Updated: 2026/07/25 15:09:13 by diego            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,19 @@ void acquire_dongle(t_coder *coder, t_dongle *dongle)
 		curr_time = gettimeofday() - coder->env->start_tipe;
 		t_remaining = (dongle->last_released_time + coder->env->cooldown) - curr_time;
 		top = heap_peek(&dongle->heap);
-		if (top.coder_id == coder->id && t_remaining <= 0)
-			break; //può prendere il dongle
-		//se deve attendere va in sleep
+		if (top.coder_id == coder->id)
+		{
+			if (t_remaining <= 0)
+				break;
+			pthread_mutex_unlock(&dongle->mutex);
+			usleep(t_remaining * 1000);
+			pthread_mutex_lock(&dongle->mutex);
+			continue;
+		}
 		pthread_cond_wait(&dongle->cond, &dongle->mutex);
 	}
 	//rimuove la richiesta dall'heap
-	heap_pop(&dongle->cond, &dongle->mutex);
+	heap_pop(&dongle->cond, coder->env->scheduler_type);
 	pthread_mutex_unlock(&dongle->mutex);
 }
 
