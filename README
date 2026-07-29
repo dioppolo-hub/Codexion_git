@@ -50,3 +50,5 @@ SCALETTA PROGETTO:
 	-Inizializza le Strutture, lancia i thread dei coder,
 	 lancia il monitor, fai il pthread_join quando finisce la simulazione,
 	 distruggi tutti i mutex e le condition variables
+
+	 

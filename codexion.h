@@ -6,7 +6,7 @@
 /*   By: diego <diego@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/25 10:04:17 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/07/25 14:04:41 by diego            ###   ########.fr       */
+/*   Updated: 2026/07/29 17:16:19 by diego            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 # include <pthread.h>
 # include <limits.h>
 # include <string.h>
+# include <sys/time.h> 
+
 
 typedef struct s_request {
 	int coder_id;
@@ -51,7 +53,7 @@ typedef struct s_env {
 	int req_compiles;
 	long long cooldown;
 	int scheduler_type; // 0 per FIFO, 1 per EDF
-	long long start_tipe;
+	long long start_time;
 	pthread_mutex_t write_mutex; //mutex per non accavallare i printf
 	int simulation_running; //flag per bloccare tutto
 	pthread_mutex_t sim_mutex;
@@ -86,6 +88,11 @@ void heap_push(t_heap *heap, t_request req, int scheduler_type);
 t_request heap_pop(t_heap *heap, int scheduler_type);
 t_request heap_peek(t_heap *heap);
 void heap_clear(t_heap *heap);
+void acquire_dongle(t_coder *coder, t_dongle *dongle);
+void release_dongle(t_coder *coder, t_dongle *dongle);
+void lock_both_dongles(t_coder *coder);
+void release_both_dongle(t_coder *coder);
+long long get_time_ms(void);
 
 
 #endif
