@@ -6,7 +6,7 @@
 /*   By: diego <diego@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/29 17:16:42 by diego             #+#    #+#             */
-/*   Updated: 2026/07/29 19:28:06 by diego            ###   ########.fr       */
+/*   Updated: 2026/07/30 14:14:32 by diego            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ void print_status(t_coder *coder, char *status)
 	pthread_mutex_unlock(&coder->env->write_mutex);
 }
 
+//controllo sullo stato della simulzione
 bool is_simulation_running(t_env *env)
 {
 	bool running;
@@ -60,13 +61,18 @@ static void coder_debug(t_coder *coder)
 
 static void coder_compile(t_coder *coder)
 {
+	//prendi dongle
 	lock_both_dongles(coder);
+	//aggiorna l'orario di last compilazione
 	pthread_mutex_lock(&coder->env->sim_mutex);
 	coder->last_compile_start = get_time_ms();
 	pthread_mutex_unlock(&coder->env->sim_mutex);
+	//compila
 	print_status(coder, "is compiling");
 	smart_sleep(coder->env->t_compile, coder->env);
+	//cont++
 	coder->compile_count++;
+	//lascia i dongle
 	release_both_dongle(coder);
 }
 
