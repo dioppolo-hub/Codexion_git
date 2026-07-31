@@ -6,13 +6,13 @@
 /*   By: diego <diego@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/18 14:55:55 by diego             #+#    #+#             */
-/*   Updated: 2026/07/25 15:01:22 by diego            ###   ########.fr       */
+/*   Updated: 2026/07/31 14:43:09 by diego            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-static int compare_requests(t_request a, t_request b, int scheduler_type)
+int compare_requests(t_request a, t_request b, int scheduler_type)
 {
 	if (scheduler_type == 0) //FIFO
 	{
@@ -30,7 +30,7 @@ static int compare_requests(t_request a, t_request b, int scheduler_type)
 
 //Spinge un elemento verso l'alto nell'heap finché non trova la sua
 //posizione corretta per rispettare la priorità
-static void heapify_up(t_heap *heap, int i, int scheduler_type)
+void heapify_up(t_heap *heap, int i, int scheduler_type)
 {
 	int parent;
 	t_request tmp;
@@ -52,7 +52,7 @@ static void heapify_up(t_heap *heap, int i, int scheduler_type)
 
 //Spinge un elemento verso il basso nell'heap confrontandolo
 //con i suoi figli.
-static void heapify_down(t_heap *heap, int i, int scheduler_type)
+void heapify_down(t_heap *heap, int i, int scheduler_type)
 {
 	int child;
 	int left;

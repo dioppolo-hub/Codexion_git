@@ -6,7 +6,7 @@
 /*   By: diego <diego@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/29 17:16:42 by diego             #+#    #+#             */
-/*   Updated: 2026/07/30 14:14:32 by diego            ###   ########.fr       */
+/*   Updated: 2026/07/31 14:31:28 by diego            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,13 +53,13 @@ void smart_sleep(long long time_in_ms, t_env *env)
 	}
 }
 
-static void coder_debug(t_coder *coder)
+void coder_debug(t_coder *coder)
 {
 	print_status(coder, "is debugging");
 	smart_sleep(coder->env->t_debug, coder->env);
 }
 
-static void coder_compile(t_coder *coder)
+void coder_compile(t_coder *coder)
 {
 	//prendi dongle
 	lock_both_dongles(coder);
@@ -76,7 +76,7 @@ static void coder_compile(t_coder *coder)
 	release_both_dongle(coder);
 }
 
-static void coder_refactor(t_coder *coder)
+void coder_refactor(t_coder *coder)
 {
 	print_status(coder, "is refactoring");
 	smart_sleep(coder->env->t_refactor, coder->env);

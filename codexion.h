@@ -6,7 +6,7 @@
 /*   By: diego <diego@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/25 10:04:17 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/07/29 17:16:19 by diego            ###   ########.fr       */
+/*   Updated: 2026/07/31 14:42:54 by diego            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,9 +80,9 @@ bool parce_n_comp(char *n_comp);
 bool parce_dongle_cool(char *d_cooldown);
 bool parce_scheduler(char *scheduler);
 bool is_valid_int(char *str, bool allow_zero);
-static int compare_requests(t_request a, t_request b, int scheduler_type);
-static void heapify_up(t_heap *heap, int i, int scheduler_type);
-static void heapify_down(t_heap *heap, int i, int scheduler_type);
+int compare_requests(t_request a, t_request b, int scheduler_type);
+void heapify_up(t_heap *heap, int i, int scheduler_type);
+void heapify_down(t_heap *heap, int i, int scheduler_type);
 void heap_init(t_heap *heap, int capacity);
 void heap_push(t_heap *heap, t_request req, int scheduler_type);
 t_request heap_pop(t_heap *heap, int scheduler_type);
@@ -93,6 +93,15 @@ void release_dongle(t_coder *coder, t_dongle *dongle);
 void lock_both_dongles(t_coder *coder);
 void release_both_dongle(t_coder *coder);
 long long get_time_ms(void);
-
+void print_status(t_coder *coder, char *status);
+bool is_simulation_running(t_env *env);
+void smart_sleep(long long time_in_ms, t_env *env);
+void coder_debug(t_coder *coder);
+void coder_compile(t_coder *coder);
+void coder_refactor(t_coder *coder);
+void *coder_routine(void *arg);
+bool check_coder_burnout(t_coder *coder);
+bool check_all_finished(t_coder *coders, t_env *env);
+void *monitor_routine(void *arg);
 
 #endif

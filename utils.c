@@ -6,7 +6,7 @@
 /*   By: diego <diego@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/25 14:02:03 by diego             #+#    #+#             */
-/*   Updated: 2026/07/29 17:15:05 by diego            ###   ########.fr       */
+/*   Updated: 2026/07/31 14:55:56 by diego            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,33 +18,40 @@ void acquire_dongle(t_coder *coder, t_dongle *dongle)
 	t_request top;
 	long long curr_time;
 	long long t_remaining;
-	
+	struct timespec ts;
+    long long wake_time;
+
 	pthread_mutex_lock(&dongle->mutex);
 	//inserisce la richiesta nell'heap
 	req.coder_id = coder->id;
 	req.request_time = get_time_ms() - coder->env->start_time;
+	pthread_mutex_lock(&coder->env->sim_mutex);
 	req.deadline = coder->last_compile_start + coder->env->t_burnout;
+	pthread_mutex_unlock(&coder->env->sim_mutex);
 	heap_push(&dongle->heap, req, coder->env->scheduler_type);
 	//attende finché non è il primo e il cooldown non è scaduto
-	while (1)
+	pthread_cond_broadcast(&dongle->cond);
+	while (is_simulation_running(coder->env))
 	{
-		curr_time = get_time_ms() - coder->env->start_time;
-		t_remaining = (dongle->last_released_time + coder->env->cooldown) - curr_time;
 		top = heap_peek(&dongle->heap);
 		if (top.coder_id == coder->id) //se è il suo turno in cima
 		{
+			curr_time = get_time_ms() - coder->env->start_time;
+			t_remaining = (dongle->last_released_time + coder->env->cooldown) - curr_time;
 			if (t_remaining <= 0) //se il cooldown è finito break
 				break;
-			pthread_mutex_unlock(&dongle->mutex);
-			usleep(t_remaining * 1000);
-			pthread_mutex_lock(&dongle->mutex);
-			continue;
+			wake_time = get_time_ms() + t_remaining;
+            ts.tv_sec = wake_time / 1000;
+            ts.tv_nsec = (wake_time % 1000) * 1000000;
+			pthread_cond_timedwait(&dongle->cond, &dongle->mutex, &ts);
 		}
 		//se non è il primo in coda si mette in attesa
-		pthread_cond_wait(&dongle->cond, &dongle->mutex);
+		else
+			pthread_cond_wait(&dongle->cond, &dongle->mutex);
 	}
 	//rimuove la richiesta dall'heap
-	heap_pop(&dongle->heap, coder->env->scheduler_type);
+	if (is_simulation_running(coder->env))
+        heap_pop(&dongle->heap, coder->env->scheduler_type);
 	pthread_mutex_unlock(&dongle->mutex);
 }
 
