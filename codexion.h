@@ -6,7 +6,7 @@
 /*   By: diego <diego@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/25 10:04:17 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/07/31 14:42:54 by diego            ###   ########.fr       */
+/*   Updated: 2026/08/01 19:07:12 by diego            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ typedef struct s_coder {
 } t_coder;
 
 
-bool parcing_1(int argc, char** argv);
+bool parcing_1(int argc, char** argv, t_env *env);
 bool parce_n_coders(char *n_coder);
 bool parce_t_burnout(char *t_burnout);
 bool parce_t_compile(char *t_compile);

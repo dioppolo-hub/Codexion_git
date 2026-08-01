@@ -6,7 +6,7 @@
 /*   By: diego <diego@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/25 10:09:14 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/07/01 16:01:51 by diego            ###   ########.fr       */
+/*   Updated: 2026/08/01 18:58:25 by diego            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,20 +72,32 @@ bool parce_t_debug(char *t_debug)
 		return true;
 }
 
-bool parcing_1(int argc, char** argv)
+bool parcing_1(int argc, char** argv, t_env *env)
 {
 	if (argc != 9)
 		return false;
 	if (
-		parce_n_coders(argv[1]) &&\
-		parce_t_burnout(argv[2]) &&\
-		parce_t_compile(argv[3]) &&\
-		parce_t_debug(argv[4]) &&\
-		parce_t_refactor(argv[5]) &&\
-		parce_n_comp(argv[6]) &&\
-		parce_dongle_cool(argv[7]) &&\
-		parce_scheduler(argv[8]))
-		return true;
+		!parce_n_coders(argv[1]) ||\
+		!parce_t_burnout(argv[2]) ||\
+		!parce_t_compile(argv[3]) ||\
+		!parce_t_debug(argv[4]) ||\
+		!parce_t_refactor(argv[5]) ||\
+		!parce_n_comp(argv[6]) ||\
+		!parce_dongle_cool(argv[7]) ||\
+		!parce_scheduler(argv[8]))
+		return false;
+	env->num_coders = atoi(argv[1]);
+	env->t_burnout = atoi(argv[2]);
+	env->t_compile = atoi(argv[3]);
+	env->t_debug = atoi(argv[4]);
+	env->t_refactor = atoi(argv[5]);
+	env->req_compiles = atoi(argv[6]);
+	env->cooldown = atoi(argv[7]);
+	if (strcmp(argv[8], "edf") == 0)
+		env->scheduler_type = 1;
+	else if (strcmp(argv[8], "fifo") == 0)
+		env->scheduler_type = 0;
 	else
 		return false;
+	return true;
 }

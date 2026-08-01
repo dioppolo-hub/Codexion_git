@@ -6,7 +6,7 @@
 /*   By: diego <diego@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/25 10:08:27 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/07/31 14:41:16 by diego            ###   ########.fr       */
+/*   Updated: 2026/08/01 19:07:50 by diego            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,7 @@ int main(int argc, char **argv)
 	t_env env;
 	t_coder *coders;
 
-	if (!parcing_1(argc, argv))
+	if (!parcing_1(argc, argv, &env))
 	{
 		printf("Error: Invalid argumets\n");
 		return 1;
