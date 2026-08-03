@@ -6,7 +6,7 @@
 /*   By: diego <diego@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/25 14:02:03 by diego             #+#    #+#             */
-/*   Updated: 2026/07/31 14:55:56 by diego            ###   ########.fr       */
+/*   Updated: 2026/08/03 10:52:08 by diego            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,16 +30,18 @@ void acquire_dongle(t_coder *coder, t_dongle *dongle)
 	pthread_mutex_unlock(&coder->env->sim_mutex);
 	heap_push(&dongle->heap, req, coder->env->scheduler_type);
 	//attende finché non è il primo e il cooldown non è scaduto
-	pthread_cond_broadcast(&dongle->cond);
 	while (is_simulation_running(coder->env))
 	{
 		top = heap_peek(&dongle->heap);
-		if (top.coder_id == coder->id) //se è il suo turno in cima
+		if (top.coder_id == coder->id && !dongle->is_in_use) //se è il suo turno in cima
 		{
 			curr_time = get_time_ms() - coder->env->start_time;
 			t_remaining = (dongle->last_released_time + coder->env->cooldown) - curr_time;
 			if (t_remaining <= 0) //se il cooldown è finito break
+			{
+				dongle->is_in_use = true;
 				break;
+			}	
 			wake_time = get_time_ms() + t_remaining;
             ts.tv_sec = wake_time / 1000;
             ts.tv_nsec = (wake_time % 1000) * 1000000;
@@ -49,15 +51,15 @@ void acquire_dongle(t_coder *coder, t_dongle *dongle)
 		else
 			pthread_cond_wait(&dongle->cond, &dongle->mutex);
 	}
-	//rimuove la richiesta dall'heap
-	if (is_simulation_running(coder->env))
-        heap_pop(&dongle->heap, coder->env->scheduler_type);
 	pthread_mutex_unlock(&dongle->mutex);
 }
 
 void release_dongle(t_coder *coder, t_dongle *dongle)
 {
 	pthread_mutex_lock(&dongle->mutex);
+	if (is_simulation_running(coder->env))
+		heap_pop(&dongle->heap, coder->env->scheduler_type);
+	dongle->is_in_use = false;
 	//aggiorna l'orario di ultimo rilascio
 	dongle->last_released_time = get_time_ms() - coder->env->start_time;
 	//sveglia gli altri coder in attesa su questo dongle

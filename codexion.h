@@ -6,7 +6,7 @@
 /*   By: diego <diego@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/25 10:04:17 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/08/01 19:07:12 by diego            ###   ########.fr       */
+/*   Updated: 2026/08/03 10:46:09 by diego            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ typedef struct s_dongle {
 	pthread_mutex_t mutex;
 	pthread_cond_t cond;
 	int id;
+	bool is_in_use;
 	long long last_released_time; //Per gestire il cooldown
 	// Coda di priorità (heap) per gestire le richieste FIFO/EDF
 	t_heap heap;
