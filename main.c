@@ -6,7 +6,7 @@
 /*   By: diego <diego@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/25 10:08:27 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/08/01 19:07:50 by diego            ###   ########.fr       */
+/*   Updated: 2026/08/04 18:22:19 by diego            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ t_coder *init_coders(t_env *env)
 		coders[i].env = env;
 		coders[i].left_dongle = &env->dongles[i];
 		coders[i].right_dongle = &env->dongles[(i + 1) % env->num_coders];
+		i++;
 	}
 	return coders;
 }
@@ -86,7 +87,6 @@ bool start_simulation(t_env *env, t_coder *coders)
 	threads = malloc(sizeof(pthread_t) * env->num_coders);
 	if (!threads)
 		return false;
-	env->start_time = get_time_ms();
 	i = 0;
 	while (i < env->num_coders)
 	{
@@ -127,6 +127,7 @@ int main(int argc, char **argv)
 	pthread_mutex_init(&env.write_mutex, NULL);
 	pthread_mutex_init(&env.sim_mutex, NULL);
 	env.simulation_running = 1;
+	env.start_time = get_time_ms();
 	if (!init_dongles(&env))
 	{
 		cleanup(&env, NULL);
