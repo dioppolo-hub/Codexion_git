@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   parcing_atoi.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: diego <diego@student.42.fr>                +#+  +:+       +#+        */
+/*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/01 15:51:54 by diego             #+#    #+#             */
-/*   Updated: 2026/08/01 19:05:56 by diego            ###   ########.fr       */
+/*   Updated: 2026/09/15 10:01:16 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-long long ft_atoll(const char *str)
+long long	ft_atoll(const char *str)
 {
 	long long	result;
 	int			i;
@@ -37,25 +37,26 @@ long long ft_atoll(const char *str)
 	return (result * sign);
 }
 
-bool is_valid_int(char *str, bool allow_zero)
+bool	is_valid_int(char *str, bool allow_zero)
 {
-	int i = 0;
-	int val;
+	int	i;
+	int	val;
 
+	i = 0;
 	if (!str || str[0] == '\0')
-		return false;
+		return (false);
 	while (str[i])
 	{
 		if (str[i] < '0' || str[i] > '9')
-			return false;
+			return (false);
 		i++;
 	}
 	val = ft_atoll(str);
 	if (val > INT_MAX)
-		return false;
+		return (false);
 	if (allow_zero && val < 0)
-		return false;
+		return (false);
 	if (!allow_zero && val <= 0)
-		return false;
-	return true;
+		return (false);
+	return (true);
 }

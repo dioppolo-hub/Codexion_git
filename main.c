@@ -3,45 +3,45 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: diego <diego@student.42.fr>                +#+  +:+       +#+        */
+/*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/25 10:08:27 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/08/04 18:22:19 by diego            ###   ########.fr       */
+/*   Updated: 2026/09/15 09:45:01 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-bool init_dongles(t_env *env)
+bool	init_dongles(t_env *env)
 {
-	int i;
+	int	i;
 
 	env->dongles = malloc(sizeof(t_dongle) * env->num_coders);
 	if (!env->dongles)
-		return false;
+		return (false);
 	i = 0;
 	while (i < env->num_coders)
 	{
 		env->dongles[i].id = i;
 		env->dongles[i].last_released_time = 0;
 		if (pthread_mutex_init(&env->dongles[i].mutex, NULL) != 0)
-			return false;
+			return (false);
 		if (pthread_cond_init(&env->dongles[i].cond, NULL) != 0)
-			return false;
+			return (false);
 		heap_init(&env->dongles[i].heap, env->num_coders);
 		i++;
 	}
-	return true;
+	return (true);
 }
 
-t_coder *init_coders(t_env *env)
+t_coder	*init_coders(t_env *env)
 {
-	t_coder *coders;
-	int i;
+	t_coder	*coders;
+	int		i;
 
 	coders = malloc(sizeof(t_coder) * env->num_coders);
 	if (!coders)
-		return NULL;
+		return (NULL);
 	i = 0;
 	while (i < env->num_coders)
 	{
@@ -53,12 +53,12 @@ t_coder *init_coders(t_env *env)
 		coders[i].right_dongle = &env->dongles[(i + 1) % env->num_coders];
 		i++;
 	}
-	return coders;
+	return (coders);
 }
 
-void cleanup(t_env *env, t_coder *coders)
+void	cleanup(t_env *env, t_coder *coders)
 {
-	int i;
+	int	i;
 
 	if (env->dongles)
 	{
@@ -78,15 +78,15 @@ void cleanup(t_env *env, t_coder *coders)
 		free(coders);
 }
 
-bool start_simulation(t_env *env, t_coder *coders)
+bool	start_simulation(t_env *env, t_coder *coders)
 {
-	pthread_t *threads;
-	pthread_t monitor;
-	int i;
+	pthread_t	*threads;
+	pthread_t	monitor;
+	int			i;
 
 	threads = malloc(sizeof(pthread_t) * env->num_coders);
 	if (!threads)
-		return false;
+		return (false);
 	i = 0;
 	while (i < env->num_coders)
 	{
@@ -94,7 +94,7 @@ bool start_simulation(t_env *env, t_coder *coders)
 		if (pthread_create(&threads[i], NULL, coder_routine, &coders[i]) != 0)
 		{
 			free(threads);
-			return false;
+			return (false);
 		}
 		i++;
 	}
@@ -111,18 +111,18 @@ bool start_simulation(t_env *env, t_coder *coders)
 		i++;
 	}
 	free (threads);
-	return true;
+	return (true);
 }
 
-int main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
-	t_env env;
-	t_coder *coders;
+	t_env	env;
+	t_coder	*coders;
 
 	if (!parcing_1(argc, argv, &env))
 	{
 		printf("Error: Invalid argumets\n");
-		return 1;
+		return (1);
 	}
 	pthread_mutex_init(&env.write_mutex, NULL);
 	pthread_mutex_init(&env.sim_mutex, NULL);
@@ -131,20 +131,20 @@ int main(int argc, char **argv)
 	if (!init_dongles(&env))
 	{
 		cleanup(&env, NULL);
-		return 1;
+		return (1);
 	}
 	coders = init_coders(&env);
 	if (!coders)
 	{
 		cleanup(&env, NULL);
-		return 1;
+		return (1);
 	}
 	if (!start_simulation(&env, coders))
 	{
 		printf("Error creating threads\n");
 		cleanup(&env, coders);
-		return 1;
+		return (1);
 	}
 	cleanup(&env, coders);
-	return 0;
+	return (0);
 }

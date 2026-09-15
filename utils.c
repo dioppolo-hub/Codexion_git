@@ -3,78 +3,82 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: diego <diego@student.42.fr>                +#+  +:+       +#+        */
+/*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/25 14:02:03 by diego             #+#    #+#             */
-/*   Updated: 2026/08/03 10:52:08 by diego            ###   ########.fr       */
+/*   Updated: 2026/09/15 10:10:00 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-void acquire_dongle(t_coder *coder, t_dongle *dongle)
+//inserisce la richiesta nell'heap
+//attende finché non è il primo e il cooldown non è scaduto
+//se è il suo turno in cima
+//se il cooldown è finito break
+//se non è il primo in coda si mette in attesa
+void	acquire_dongle(t_coder *coder, t_dongle *dongle)
 {
-	t_request req;
-	t_request top;
-	long long curr_time;
-	long long t_remaining;
-	struct timespec ts;
-    long long wake_time;
+	t_request		req;
+	t_request		top;
+	long long		curr_time;
+	long long		t_remaining;
+	struct timespec	ts;
+	long long		wake_time;
 
 	pthread_mutex_lock(&dongle->mutex);
-	//inserisce la richiesta nell'heap
 	req.coder_id = coder->id;
 	req.request_time = get_time_ms() - coder->env->start_time;
 	pthread_mutex_lock(&coder->env->sim_mutex);
 	req.deadline = coder->last_compile_start + coder->env->t_burnout;
 	pthread_mutex_unlock(&coder->env->sim_mutex);
 	heap_push(&dongle->heap, req, coder->env->scheduler_type);
-	//attende finché non è il primo e il cooldown non è scaduto
 	while (is_simulation_running(coder->env))
 	{
 		top = heap_peek(&dongle->heap);
-		if (top.coder_id == coder->id && !dongle->is_in_use) //se è il suo turno in cima
+		if (top.coder_id == coder->id && !dongle->is_in_use)
 		{
 			curr_time = get_time_ms() - coder->env->start_time;
-			t_remaining = (dongle->last_released_time + coder->env->cooldown) - curr_time;
-			if (t_remaining <= 0) //se il cooldown è finito break
+			t_remaining = (
+					dongle->last_released_time
+					+ coder->env->cooldown) - curr_time;
+			if (t_remaining <= 0)
 			{
 				dongle->is_in_use = true;
-				break;
-			}	
+				break ;
+			}
 			wake_time = get_time_ms() + t_remaining;
-            ts.tv_sec = wake_time / 1000;
-            ts.tv_nsec = (wake_time % 1000) * 1000000;
+			ts.tv_sec = wake_time / 1000;
+			ts.tv_nsec = (wake_time % 1000) * 1000000;
 			pthread_cond_timedwait(&dongle->cond, &dongle->mutex, &ts);
 		}
-		//se non è il primo in coda si mette in attesa
 		else
 			pthread_cond_wait(&dongle->cond, &dongle->mutex);
 	}
 	pthread_mutex_unlock(&dongle->mutex);
 }
 
-void release_dongle(t_coder *coder, t_dongle *dongle)
+//aggiorna l'orario di ultimo rilascio
+//sveglia gli altri coder in attesa su questo dongle
+void	release_dongle(t_coder *coder, t_dongle *dongle)
 {
 	pthread_mutex_lock(&dongle->mutex);
 	if (is_simulation_running(coder->env))
 		heap_pop(&dongle->heap, coder->env->scheduler_type);
 	dongle->is_in_use = false;
-	//aggiorna l'orario di ultimo rilascio
 	dongle->last_released_time = get_time_ms() - coder->env->start_time;
-	//sveglia gli altri coder in attesa su questo dongle
 	pthread_cond_broadcast(&dongle->cond);
 	pthread_mutex_unlock(&dongle->mutex);
 }
 
-void lock_both_dongles(t_coder *coder)
+//per prevenire stalli ordina in base all'ID
+void	lock_both_dongles(t_coder *coder)
 {
-	t_dongle *first;
-	t_dongle *second;
+	t_dongle	*first;
+	t_dongle	*second;
 
 	first = coder->left_dongle;
 	second = coder->right_dongle;
-	//per prevenire stalli ordina in base all'ID
 	if (first->id > second->id)
 	{
 		first = coder->right_dongle;
@@ -84,15 +88,15 @@ void lock_both_dongles(t_coder *coder)
 	acquire_dongle(coder, second);
 }
 
-void release_both_dongle(t_coder *coder)
+void	release_both_dongle(t_coder *coder)
 {
 	release_dongle(coder, coder->left_dongle);
 	release_dongle(coder, coder->right_dongle);
 }
 
-long long get_time_ms(void)
+long long	get_time_ms(void)
 {
-	struct timeval tv;
+	struct timeval	tv;
 
 	gettimeofday(&tv, NULL);
 	return ((tv.tv_sec * 1000LL) + (tv.tv_usec / 1000));
