@@ -27,6 +27,8 @@ t_request	heap_pop(t_heap *heap, int scheduler_type)
 {
 	t_request	top;
 
+	if (heap->size == 0)
+		return ((t_request){0});
 	top = heap->request[0];
 	heap->size--;
 	if (heap->size > 0)
@@ -40,6 +42,8 @@ t_request	heap_pop(t_heap *heap, int scheduler_type)
 //ritorna la richiesta in cima senza rimuoverla
 t_request	heap_peek(t_heap *heap)
 {
+	if (heap->size == 0)
+		return ((t_request){0});
 	return (heap->request[0]);
 }
 

@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/25 10:04:17 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/09/15 10:16:18 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/09/15 11:53:52 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ typedef struct s_coder
 }	t_coder;
 
 bool		parcing_1(int argc, char **argv, t_env *env);
+bool		norm_start_sim(t_env *env, pthread_t *threads, t_coder *coders);
 bool		parce_n_coders(char *n_coder);
 bool		parce_t_burnout(char *t_burnout);
 bool		parce_t_compile(char *t_compile);
@@ -98,7 +99,10 @@ t_request	heap_pop(t_heap *heap, int scheduler_type);
 t_request	heap_peek(t_heap *heap);
 void		heap_clear(t_heap *heap);
 void		acquire_dongle(t_coder *coder, t_dongle *dongle);
+bool		init_dongles(t_env *env);
+t_coder		*init_coders(t_env *env);
 void		release_dongle(t_coder *coder, t_dongle *dongle);
+void		norm_acquire_dongle(t_coder *coder, t_dongle *dongle);
 void		lock_both_dongles(t_coder *coder);
 void		release_both_dongle(t_coder *coder);
 long long	get_time_ms(void);

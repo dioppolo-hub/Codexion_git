@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/25 10:08:27 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/09/15 11:03:07 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/09/15 11:55:09 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,11 @@ bool	start_simulation(t_env *env, t_coder *coders)
 	threads = malloc(sizeof(pthread_t) * env->num_coders);
 	if (!threads)
 		return (false);
-	norm_start_sim(env, threads, coders);
+	if (!norm_start_sim(env, threads, coders))
+	{
+		free(threads);
+		return (false);
+	}
 	if (pthread_create(&monitor, NULL, monitor_routine, coders) != 0)
 	{
 		free(threads);
@@ -60,7 +64,7 @@ bool	start_simulation(t_env *env, t_coder *coders)
 	return (true);
 }
 
-void	norm_start_sim(t_env *env, pthread_t *threads, t_coder *coders)
+bool	norm_start_sim(t_env *env, pthread_t *threads, t_coder *coders)
 {
 	int	i;
 
@@ -70,16 +74,16 @@ void	norm_start_sim(t_env *env, pthread_t *threads, t_coder *coders)
 		coders[i].last_compile_start = env->start_time;
 		if (pthread_create(&threads[i], NULL, coder_routine, &coders[i]) != 0)
 		{
-			free(threads);
 			return (false);
 		}
 		i++;
 	}
+	return (true);
 }
 
 static int	init_and_setup(int argc, char **argv, t_env *env, t_coder **coders)
 {
-	if (!parcing_1(argc, argv, &env))
+	if (!parcing_1(argc, argv, env))
 	{
 		printf("Error: Invalid argumets\n");
 		return (1);
@@ -88,11 +92,12 @@ static int	init_and_setup(int argc, char **argv, t_env *env, t_coder **coders)
 	pthread_mutex_init(&env->sim_mutex, NULL);
 	env->simulation_running = 1;
 	env->start_time = get_time_ms();
-	if (!init_dongles(&env))
+	if (!init_dongles(env))
 		return (0);
-	coders = init_coders(&env);
+	*coders = init_coders(env);
 	if (!coders)
 		return (0);
+	return (1);
 }
 
 int	main(int argc, char **argv)

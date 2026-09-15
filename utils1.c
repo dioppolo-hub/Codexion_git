@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/25 14:02:03 by diego             #+#    #+#             */
-/*   Updated: 2026/09/15 10:42:14 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/09/15 11:56:46 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,6 @@ void	norm_acquire_dongle(t_coder *coder, t_dongle *dongle)
 	t_request		top;
 	long long		curr_time;
 	long long		t_remaining;
-	long long		wake_time;
 
 	while (is_simulation_running(coder->env))
 	{

@@ -23,6 +23,7 @@ bool	init_dongles(t_env *env)
 	while (i < env->num_coders)
 	{
 		env->dongles[i].id = i;
+		env->dongles[i].is_in_use = false;
 		env->dongles[i].last_released_time = 0;
 		if (pthread_mutex_init(&env->dongles[i].mutex, NULL) != 0)
 			return (false);

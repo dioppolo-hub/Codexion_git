@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/18 14:55:55 by diego             #+#    #+#             */
-/*   Updated: 2026/09/15 10:21:13 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/09/15 11:51:22 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,8 +63,9 @@ void	heapify_down(t_heap *heap, int i, int scheduler_type)
 	int			right;
 	t_request	tmp;
 
-	while ((left == 2 * i + 1) < heap->size)
+	while ((2 * i + 1) < heap->size)
 	{
+		left = 2 * i + 1;
 		right = left + 1;
 		child = left;
 		if (
