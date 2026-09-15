@@ -6,55 +6,11 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/25 10:08:27 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/09/15 09:45:01 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/09/15 11:03:07 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
-
-bool	init_dongles(t_env *env)
-{
-	int	i;
-
-	env->dongles = malloc(sizeof(t_dongle) * env->num_coders);
-	if (!env->dongles)
-		return (false);
-	i = 0;
-	while (i < env->num_coders)
-	{
-		env->dongles[i].id = i;
-		env->dongles[i].last_released_time = 0;
-		if (pthread_mutex_init(&env->dongles[i].mutex, NULL) != 0)
-			return (false);
-		if (pthread_cond_init(&env->dongles[i].cond, NULL) != 0)
-			return (false);
-		heap_init(&env->dongles[i].heap, env->num_coders);
-		i++;
-	}
-	return (true);
-}
-
-t_coder	*init_coders(t_env *env)
-{
-	t_coder	*coders;
-	int		i;
-
-	coders = malloc(sizeof(t_coder) * env->num_coders);
-	if (!coders)
-		return (NULL);
-	i = 0;
-	while (i < env->num_coders)
-	{
-		coders[i].id = i + 1;
-		coders[i].compile_count = 0;
-		coders[i].last_compile_start = env->start_time;
-		coders[i].env = env;
-		coders[i].left_dongle = &env->dongles[i];
-		coders[i].right_dongle = &env->dongles[(i + 1) % env->num_coders];
-		i++;
-	}
-	return (coders);
-}
 
 void	cleanup(t_env *env, t_coder *coders)
 {
@@ -87,17 +43,7 @@ bool	start_simulation(t_env *env, t_coder *coders)
 	threads = malloc(sizeof(pthread_t) * env->num_coders);
 	if (!threads)
 		return (false);
-	i = 0;
-	while (i < env->num_coders)
-	{
-		coders[i].last_compile_start = env->start_time;
-		if (pthread_create(&threads[i], NULL, coder_routine, &coders[i]) != 0)
-		{
-			free(threads);
-			return (false);
-		}
-		i++;
-	}
+	norm_start_sim(env, threads, coders);
 	if (pthread_create(&monitor, NULL, monitor_routine, coders) != 0)
 	{
 		free(threads);
@@ -114,29 +60,49 @@ bool	start_simulation(t_env *env, t_coder *coders)
 	return (true);
 }
 
-int	main(int argc, char **argv)
+void	norm_start_sim(t_env *env, pthread_t *threads, t_coder *coders)
 {
-	t_env	env;
-	t_coder	*coders;
+	int	i;
 
+	i = 0;
+	while (i < env->num_coders)
+	{
+		coders[i].last_compile_start = env->start_time;
+		if (pthread_create(&threads[i], NULL, coder_routine, &coders[i]) != 0)
+		{
+			free(threads);
+			return (false);
+		}
+		i++;
+	}
+}
+
+static int	init_and_setup(int argc, char **argv, t_env *env, t_coder **coders)
+{
 	if (!parcing_1(argc, argv, &env))
 	{
 		printf("Error: Invalid argumets\n");
 		return (1);
 	}
-	pthread_mutex_init(&env.write_mutex, NULL);
-	pthread_mutex_init(&env.sim_mutex, NULL);
-	env.simulation_running = 1;
-	env.start_time = get_time_ms();
+	pthread_mutex_init(&env->write_mutex, NULL);
+	pthread_mutex_init(&env->sim_mutex, NULL);
+	env->simulation_running = 1;
+	env->start_time = get_time_ms();
 	if (!init_dongles(&env))
-	{
-		cleanup(&env, NULL);
-		return (1);
-	}
+		return (0);
 	coders = init_coders(&env);
 	if (!coders)
+		return (0);
+}
+
+int	main(int argc, char **argv)
+{
+	t_env	env;
+	t_coder	*coders;
+
+	if (!init_and_setup(argc, argv, &env, &coders))
 	{
-		cleanup(&env, NULL);
+		cleanup(&env, coders);
 		return (1);
 	}
 	if (!start_simulation(&env, coders))
