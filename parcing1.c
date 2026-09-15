@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/25 10:09:14 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/09/15 10:04:00 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/09/15 10:23:09 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,14 +77,10 @@ bool	parcing_1(int argc, char **argv, t_env *env)
 	if (argc != 9)
 		return (false);
 	if (
-		!parce_n_coders(argv[1]) || \
-		!parce_t_burnout(argv[2]) || \
-		!parce_t_compile(argv[3]) || \
-		!parce_t_debug(argv[4]) || \
-		!parce_t_refactor(argv[5]) || \
-		!parce_n_comp(argv[6]) || \
-		!parce_dongle_cool(argv[7]) || \
-		!parce_scheduler(argv[8]))
+		!parce_n_coders(argv[1]) || !parce_t_burnout(argv[2]) || \
+		!parce_t_compile(argv[3]) || !parce_t_debug(argv[4]) || \
+		!parce_t_refactor(argv[5]) || !parce_n_comp(argv[6]) || \
+		!parce_dongle_cool(argv[7]) || !parce_scheduler(argv[8]))
 		return (false);
 	env->num_coders = atoi(argv[1]);
 	env->t_burnout = atoi(argv[2]);
