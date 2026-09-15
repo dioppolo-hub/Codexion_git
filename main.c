@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/25 10:08:27 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/09/15 11:55:09 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/09/15 12:16:42 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ static int	init_and_setup(int argc, char **argv, t_env *env, t_coder **coders)
 	if (!parcing_1(argc, argv, env))
 	{
 		printf("Error: Invalid argumets\n");
-		return (1);
+		return (0);
 	}
 	pthread_mutex_init(&env->write_mutex, NULL);
 	pthread_mutex_init(&env->sim_mutex, NULL);
@@ -95,21 +95,18 @@ static int	init_and_setup(int argc, char **argv, t_env *env, t_coder **coders)
 	if (!init_dongles(env))
 		return (0);
 	*coders = init_coders(env);
-	if (!coders)
+	if (!*coders)
 		return (0);
 	return (1);
 }
 
 int	main(int argc, char **argv)
 {
-	t_env	env;
-	t_coder	*coders;
+	t_env	env = {0};
+	t_coder	*coders = NULL;
 
 	if (!init_and_setup(argc, argv, &env, &coders))
-	{
-		cleanup(&env, coders);
 		return (1);
-	}
 	if (!start_simulation(&env, coders))
 	{
 		printf("Error creating threads\n");
