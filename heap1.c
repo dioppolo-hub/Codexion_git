@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/18 14:55:55 by diego             #+#    #+#             */
-/*   Updated: 2026/09/15 11:51:22 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/09/15 12:21:56 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 //IF = FIFO, ELSE = EDF
 //se i tempi o le scadenze sono uguali vince l'ID minore
-int	compare_requests(t_request a, t_request b, int scheduler_type)
+int	comp_requests(t_request a, t_request b, int scheduler_type)
 {
 	if (scheduler_type == 0)
 	{
@@ -39,7 +39,7 @@ void	heapify_up(t_heap *heap, int i, int scheduler_type)
 	while (i > 0)
 	{
 		parent = (i - 1) / 2;
-		if (compare_requests
+		if (comp_requests
 			(
 				heap->request[i], heap->request[parent], scheduler_type
 			))
@@ -58,7 +58,7 @@ void	heapify_up(t_heap *heap, int i, int scheduler_type)
 //con i suoi figli.
 void	heapify_down(t_heap *heap, int i, int scheduler_type)
 {
-	int			child;
+	int			cld;
 	int			left;
 	int			right;
 	t_request	tmp;
@@ -67,19 +67,18 @@ void	heapify_down(t_heap *heap, int i, int scheduler_type)
 	{
 		left = 2 * i + 1;
 		right = left + 1;
-		child = left;
+		cld = left;
 		if (
-			right < heap->size && compare_requests(heap->request[right],
+			right < heap->size && comp_requests(heap->request[right],
 				heap->request[left], scheduler_type))
-			child = right;
+			cld = right;
 		if (
-			compare_requests(heap->request[i], heap->request[child],
-				scheduler_type))
+			comp_requests(heap->request[i], heap->request[cld], scheduler_type))
 		{
 			tmp = heap->request[i];
-			heap->request[i] = heap->request[child];
-			heap->request[child] = tmp;
-			i = child;
+			heap->request[i] = heap->request[cld];
+			heap->request[cld] = tmp;
+			i = cld;
 		}
 		else
 			break ;

@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/25 10:08:27 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/09/15 12:16:42 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/09/15 12:25:54 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,10 +56,7 @@ bool	start_simulation(t_env *env, t_coder *coders)
 	pthread_join(monitor, NULL);
 	i = 0;
 	while (i < env->num_coders)
-	{
-		pthread_join(threads[i], NULL);
-		i++;
-	}
+		pthread_join(threads[i++], NULL);
 	free (threads);
 	return (true);
 }
@@ -102,8 +99,8 @@ static int	init_and_setup(int argc, char **argv, t_env *env, t_coder **coders)
 
 int	main(int argc, char **argv)
 {
-	t_env	env = {0};
-	t_coder	*coders = NULL;
+	t_env	env;
+	t_coder	*coders;
 
 	if (!init_and_setup(argc, argv, &env, &coders))
 		return (1);

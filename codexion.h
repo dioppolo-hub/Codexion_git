@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/25 10:04:17 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/09/15 11:53:52 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/09/15 12:22:19 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ bool		parce_n_comp(char *n_comp);
 bool		parce_dongle_cool(char *d_cooldown);
 bool		parce_scheduler(char *scheduler);
 bool		is_valid_int(char *str, bool allow_zero);
-int			compare_requests(t_request a, t_request b, int scheduler_type);
+int			comp_requests(t_request a, t_request b, int scheduler_type);
 void		heapify_up(t_heap *heap, int i, int scheduler_type);
 void		heapify_down(t_heap *heap, int i, int scheduler_type);
 void		heap_init(t_heap *heap, int capacity);
