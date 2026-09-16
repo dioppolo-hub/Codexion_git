@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils2.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: diego <diego@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/15 10:30:39 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/09/15 10:31:03 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/09/16 12:35:03 by diego            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,25 +21,27 @@ void	release_dongle(t_coder *coder, t_dongle *dongle)
 		heap_pop(&dongle->heap, coder->env->scheduler_type);
 	dongle->is_in_use = false;
 	dongle->last_released_time = get_time_ms() - coder->env->start_time;
+	if (coder->env->cooldown > 0)
+		ft_wait_cooldown(dongle, coder->env->cooldown);
 	pthread_cond_broadcast(&dongle->cond);
 	pthread_mutex_unlock(&dongle->mutex);
 }
 
 //per prevenire stalli ordina in base all'ID
-void	lock_both_dongles(t_coder *coder)
+void	lock_left_dongles(t_coder *coder)
 {
-	t_dongle	*first;
-	t_dongle	*second;
+	t_dongle	*left;
 
-	first = coder->left_dongle;
-	second = coder->right_dongle;
-	if (first->id > second->id)
-	{
-		first = coder->right_dongle;
-		second = coder->left_dongle;
-	}
-	acquire_dongle(coder, first);
-	acquire_dongle(coder, second);
+	left = coder->left_dongle;
+	acquire_dongle(coder, left);
+}
+
+void	lock_right_dongles(t_coder *coder)
+{
+	t_dongle	*right;
+
+	right = coder->right_dongle;
+	acquire_dongle(coder, right);
 }
 
 void	release_both_dongle(t_coder *coder)

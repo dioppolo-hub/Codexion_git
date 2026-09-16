@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils1.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: diego <diego@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/25 14:02:03 by diego             #+#    #+#             */
-/*   Updated: 2026/09/15 11:56:46 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/09/16 12:36:39 by diego            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	acquire_dongle(t_coder *coder, t_dongle *dongle)
 	pthread_mutex_unlock(&dongle->mutex);
 }
 
-static void	ft_wait_cooldown(t_dongle *dongle, long long t_remaining)
+void	ft_wait_cooldown(t_dongle *dongle, long long t_remaining)
 {
 	long long		wake_time;
 	struct timespec	ts;
@@ -46,25 +46,21 @@ static void	ft_wait_cooldown(t_dongle *dongle, long long t_remaining)
 void	norm_acquire_dongle(t_coder *coder, t_dongle *dongle)
 {
 	t_request		top;
-	long long		curr_time;
-	long long		t_remaining;
+	long long	timestamp;
 
 	while (is_simulation_running(coder->env))
 	{
 		top = heap_peek(&dongle->heap);
 		if (top.coder_id == coder->id && !dongle->is_in_use)
 		{
-			curr_time = get_time_ms() - coder->env->start_time;
-			t_remaining = (dongle->last_released_time
-					+ coder->env->cooldown) - curr_time;
-			if (t_remaining <= 0)
-			{
-				dongle->is_in_use = true;
-				break ;
-			}
-			ft_wait_cooldown(dongle, t_remaining);
+			dongle->is_in_use = true;
+			break ;
 		}
-		else
-			pthread_cond_wait(&dongle->cond, &dongle->mutex);
+		pthread_cond_wait(&dongle->cond, &dongle->mutex);
 	}
+	timestamp = get_time_ms() - coder->env->start_time;
+	if (dongle == coder->right_dongle)
+		printf("%lld %d has taken the right dongle\n", timestamp, coder->id);
+	else
+		printf("%lld %d has taken the left dongle\n", timestamp, coder->id);
 }
