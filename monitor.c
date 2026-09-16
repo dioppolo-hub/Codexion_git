@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/30 14:28:55 by diego             #+#    #+#             */
-/*   Updated: 2026/09/15 09:59:59 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/09/16 14:03:01 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ bool	check_coder_burnout(t_coder *coder)
 	{
 		coder->env->simulation_running = 0;
 		pthread_mutex_lock(&coder->env->write_mutex);
+		stop_simulation(coder->env);
 		printf(
 			"%lld %d died of burnout\n",
 			now - coder->env->start_time, coder->id
@@ -91,4 +92,22 @@ void	*monitor_routine(void *arg)
 		usleep(1000);
 	}
 	return (NULL);
+}
+
+void	stop_simulation(t_env *env)
+{
+	int	i;
+
+	pthread_mutex_lock(&env->sim_mutex);
+	env->simulation_running = 0;
+	pthread_mutex_unlock(&env->sim_mutex);
+
+	i = 0;
+	while (i < env->num_coders)
+	{
+		pthread_mutex_lock(&env->dongles[i].mutex);
+		pthread_cond_broadcast(&env->dongles[i].cond);
+		pthread_mutex_unlock(&env->dongles[i].mutex);
+		i++;
+	}
 }

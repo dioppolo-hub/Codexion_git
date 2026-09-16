@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   codexion.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: diego <diego@student.42.fr>                +#+  +:+       +#+        */
+/*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/25 10:04:17 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/09/16 11:54:19 by diego            ###   ########.fr       */
+/*   Updated: 2026/09/16 14:03:21 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,5 +118,6 @@ bool		check_coder_burnout(t_coder *coder);
 bool		check_all_finished(t_coder *coders, t_env *env);
 void		*monitor_routine(void *arg);
 void		ft_wait_cooldown(t_dongle *dongle, long long t_remaining);
+void		stop_simulation(t_env *env);
 
 #endif

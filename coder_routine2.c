@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   coder_routine2.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: diego <diego@student.42.fr>                +#+  +:+       +#+        */
+/*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/15 10:17:47 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/09/16 12:40:03 by diego            ###   ########.fr       */
+/*   Updated: 2026/09/16 14:06:27 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,15 +34,13 @@ void	coder_compile(t_coder *coder)
 	pthread_mutex_unlock(&coder->env->sim_mutex);
 	print_status(coder, "is compiling");
 	smart_sleep(coder->env->t_compile, coder->env);
-	coder->compile_count++;
-	
 	release_both_dongle(coder);
 }
 
 void	coder_refactor(t_coder *coder)
 {
-	print_status(coder, "is refactoring");
 	smart_sleep(coder->env->t_refactor, coder->env);
+	print_status(coder, "is refactoring");
 }
 
 //se l'ID è dispari introduco uno sfasamento
@@ -64,6 +62,9 @@ void	*coder_routine(void *arg)
 		if (!is_simulation_running(coder->env))
 			break ;
 		coder_refactor(coder);
+		pthread_mutex_lock(&coder->env->sim_mutex);
+		coder->compile_count++;
+		pthread_mutex_unlock(&coder->env->sim_mutex);
 		if (
 			coder->env->req_compiles > 0
 			&& coder->compile_count >= coder->env->req_compiles

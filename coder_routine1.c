@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/29 17:16:42 by diego             #+#    #+#             */
-/*   Updated: 2026/09/15 10:18:02 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/09/16 14:06:18 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,6 @@ void	smart_sleep(long long time_in_ms, t_env *env)
 
 void	coder_debug(t_coder *coder)
 {
-	print_status(coder, "is debugging");
 	smart_sleep(coder->env->t_debug, coder->env);
+	print_status(coder, "is debugging");
 }

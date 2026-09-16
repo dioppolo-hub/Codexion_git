@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils1.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: diego <diego@student.42.fr>                +#+  +:+       +#+        */
+/*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/25 14:02:03 by diego             #+#    #+#             */
-/*   Updated: 2026/09/16 12:36:39 by diego            ###   ########.fr       */
+/*   Updated: 2026/09/16 14:04:12 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,8 @@ void	norm_acquire_dongle(t_coder *coder, t_dongle *dongle)
 		}
 		pthread_cond_wait(&dongle->cond, &dongle->mutex);
 	}
+	if (!is_simulation_running(coder->env))
+		return ;
 	timestamp = get_time_ms() - coder->env->start_time;
 	if (dongle == coder->right_dongle)
 		printf("%lld %d has taken the right dongle\n", timestamp, coder->id);
