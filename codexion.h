@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/25 10:04:17 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/09/16 14:03:21 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/09/18 10:22:17 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,8 +103,6 @@ bool		init_dongles(t_env *env);
 t_coder		*init_coders(t_env *env);
 void		release_dongle(t_coder *coder, t_dongle *dongle);
 void		norm_acquire_dongle(t_coder *coder, t_dongle *dongle);
-void		lock_left_dongles(t_coder *coder);
-void		lock_right_dongles(t_coder *coder);
 void		release_both_dongle(t_coder *coder);
 long long	get_time_ms(void);
 void		print_status(t_coder *coder, char *status);
@@ -119,5 +117,6 @@ bool		check_all_finished(t_coder *coders, t_env *env);
 void		*monitor_routine(void *arg);
 void		ft_wait_cooldown(t_dongle *dongle, long long t_remaining);
 void		stop_simulation(t_env *env);
+void		lock_both_dongles(t_coder *coder);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/15 10:17:47 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/09/16 14:06:27 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/09/18 10:21:33 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,16 +19,7 @@
 //lascia i dongle
 void	coder_compile(t_coder *coder)
 {
-	if (coder->left_dongle->id < coder->right_dongle->id)	
-	{
-		lock_left_dongles(coder);
-		lock_right_dongles(coder);
-	}
-	else
-	{
-		lock_right_dongles(coder);
-		lock_left_dongles(coder);
-	}
+	lock_both_dongles(coder);
 	pthread_mutex_lock(&coder->env->sim_mutex);
 	coder->last_compile_start = get_time_ms();
 	pthread_mutex_unlock(&coder->env->sim_mutex);

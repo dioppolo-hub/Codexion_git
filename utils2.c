@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/15 10:30:39 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/09/18 09:26:53 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/09/18 10:21:43 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,21 +30,20 @@ void	release_dongle(t_coder *coder, t_dongle *dongle)
 	pthread_mutex_unlock(&dongle->mutex);
 }
 
-//per prevenire stalli ordina in base all'ID
-void	lock_left_dongles(t_coder *coder)
+void	lock_both_dongles(t_coder *coder)
 {
-	t_dongle	*left;
+	t_dongle	*first;
+	t_dongle	*second;
 
-	left = coder->left_dongle;
-	acquire_dongle(coder, left);
-}
-
-void	lock_right_dongles(t_coder *coder)
-{
-	t_dongle	*right;
-
-	right = coder->right_dongle;
-	acquire_dongle(coder, right);
+	first = coder->left_dongle;
+	second = coder->right_dongle;
+	if (first->id > second->id)
+	{
+		first = coder->right_dongle;
+		second = coder->left_dongle;
+	}
+	acquire_dongle(coder, first);
+	acquire_dongle(coder, second);
 }
 
 void	release_both_dongle(t_coder *coder)
