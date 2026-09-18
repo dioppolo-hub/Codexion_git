@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/30 14:28:55 by diego             #+#    #+#             */
-/*   Updated: 2026/09/16 14:03:01 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/09/18 09:26:56 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,20 +22,18 @@ bool	check_coder_burnout(t_coder *coder)
 	pthread_mutex_lock(&coder->env->sim_mutex);
 	now = get_time_ms();
 	t_since_last_compile = now - coder->last_compile_start;
+	pthread_mutex_unlock(&coder->env->sim_mutex);
 	if (t_since_last_compile > coder->env->t_burnout)
 	{
-		coder->env->simulation_running = 0;
-		pthread_mutex_lock(&coder->env->write_mutex);
 		stop_simulation(coder->env);
+		pthread_mutex_lock(&coder->env->write_mutex);
 		printf(
 			"%lld %d died of burnout\n",
 			now - coder->env->start_time, coder->id
 			);
 		pthread_mutex_unlock(&coder->env->write_mutex);
-		pthread_mutex_unlock(&coder->env->sim_mutex);
 		return (true);
 	}
-	pthread_mutex_unlock(&coder->env->sim_mutex);
 	return (false);
 }
 
@@ -59,9 +57,7 @@ bool	check_all_finished(t_coder *coders, t_env *env)
 	}
 	if (finished_count == env->num_coders)
 	{
-		pthread_mutex_lock(&env->sim_mutex);
-		env->simulation_running = 0;
-		pthread_mutex_unlock(&env->sim_mutex);
+		stop_simulation(env);
 		return (true);
 	}
 	return (false);

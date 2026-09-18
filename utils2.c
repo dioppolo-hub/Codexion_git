@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils2.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: diego <diego@student.42.fr>                +#+  +:+       +#+        */
+/*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/15 10:30:39 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/09/16 12:35:03 by diego            ###   ########.fr       */
+/*   Updated: 2026/09/18 09:26:53 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,11 @@
 //sveglia gli altri coder in attesa su questo dongle
 void	release_dongle(t_coder *coder, t_dongle *dongle)
 {
+	bool	running;
+
+	running = is_simulation_running(coder->env);
 	pthread_mutex_lock(&dongle->mutex);
-	if (is_simulation_running(coder->env))
+	if (running)
 		heap_pop(&dongle->heap, coder->env->scheduler_type);
 	dongle->is_in_use = false;
 	dongle->last_released_time = get_time_ms() - coder->env->start_time;
