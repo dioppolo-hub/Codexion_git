@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/25 10:04:17 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/09/18 10:22:17 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/09/18 11:56:52 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,8 +63,13 @@ typedef struct s_env
 	long long		cooldown;
 	int				scheduler_type;
 	long long		start_time;
-	pthread_mutex_t	write_mutex;
 	int				simulation_running;
+	int				initial_phase;
+	int				phase_completed;
+	int				phase_count;
+	pthread_mutex_t	start_mutex;
+	pthread_cond_t	start_cond;
+	pthread_mutex_t	write_mutex;
 	pthread_mutex_t	sim_mutex;
 	t_dongle		*dongles;
 }	t_env;
@@ -74,6 +79,7 @@ typedef struct s_coder
 	int			id;
 	int			compile_count;
 	long long	last_compile_start;
+	bool		init_acq_done;
 	t_env		*env;
 	t_dongle	*left_dongle;
 	t_dongle	*right_dongle;
@@ -118,5 +124,7 @@ void		*monitor_routine(void *arg);
 void		ft_wait_cooldown(t_dongle *dongle, long long t_remaining);
 void		stop_simulation(t_env *env);
 void		lock_both_dongles(t_coder *coder);
+void		wait_initial_phase(t_coder *coder);
+void		complete_initial_phase(t_coder *coder);
 
 #endif

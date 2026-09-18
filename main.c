@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/25 10:08:27 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/09/18 10:22:08 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/09/18 11:58:44 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ void	cleanup(t_env *env, t_coder *coders)
 	}
 	pthread_mutex_destroy(&env->write_mutex);
 	pthread_mutex_destroy(&env->sim_mutex);
+	pthread_cond_destroy(&env->start_cond);
+	pthread_mutex_destroy(&env->start_mutex);
 	if (coders)
 		free(coders);
 }
@@ -87,6 +89,16 @@ static int	init_and_setup(int argc, char **argv, t_env *env, t_coder **coders)
 	}
 	pthread_mutex_init(&env->write_mutex, NULL);
 	pthread_mutex_init(&env->sim_mutex, NULL);
+	pthread_mutex_init(&env->start_mutex, NULL);
+	pthread_cond_init(&env->start_cond, NULL);
+	env->initial_phase = 0;
+	env->phase_completed = 0;
+	if (env->num_coders == 1)
+		env->phase_completed = 1;
+	else if (env->num_coders % 2 == 0)
+		env->phase_count = 2;
+	else
+		env->phase_count = 3;
 	env->simulation_running = 1;
 	env->start_time = get_time_ms();
 	if (!init_dongles(env))

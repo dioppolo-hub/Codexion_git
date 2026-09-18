@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/15 10:17:47 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/09/18 10:21:33 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/09/18 12:13:47 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,9 @@
 //lascia i dongle
 void	coder_compile(t_coder *coder)
 {
+	wait_initial_phase(coder);
+	if (!is_simulation_running(coder->env))
+		return ;
 	lock_both_dongles(coder);
 	pthread_mutex_lock(&coder->env->sim_mutex);
 	coder->last_compile_start = get_time_ms();
@@ -26,6 +29,7 @@ void	coder_compile(t_coder *coder)
 	print_status(coder, "is compiling");
 	smart_sleep(coder->env->t_compile, coder->env);
 	release_both_dongle(coder);
+	complete_initial_phase(coder);
 }
 
 void	coder_refactor(t_coder *coder)

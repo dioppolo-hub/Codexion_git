@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/15 10:47:22 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/09/18 10:22:14 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/09/18 10:51:32 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ t_coder	*init_coders(t_env *env)
 		coders[i].compile_count = 0;
 		coders[i].last_compile_start = env->start_time;
 		coders[i].env = env;
+		coders[i].init_acq_done = false;
 		coders[i].left_dongle = &env->dongles[i];
 		coders[i].right_dongle = &env->dongles[(i + 1) % env->num_coders];
 		i++;

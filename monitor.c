@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/30 14:28:55 by diego             #+#    #+#             */
-/*   Updated: 2026/09/18 10:21:56 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/09/18 12:15:08 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,8 +96,10 @@ void	stop_simulation(t_env *env)
 
 	pthread_mutex_lock(&env->sim_mutex);
 	env->simulation_running = 0;
+	pthread_mutex_lock(&env->start_mutex);
+	pthread_cond_broadcast(&env->start_cond);
+	pthread_mutex_unlock(&env->start_mutex);
 	pthread_mutex_unlock(&env->sim_mutex);
-
 	i = 0;
 	while (i < env->num_coders)
 	{
