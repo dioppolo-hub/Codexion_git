@@ -6,7 +6,7 @@ CFLAGS = -Wall -Wextra -Werror -pthread
 
 SRC_COMMON = main.c parcing1.c parcing2.c parcing_atoi.c \
 heap1.c  heap2.c utils1.c utils2.c monitor.c coder_routine1.c \
-coder_routine2.c init.c
+coder_routine2.c init.c phases.c
 
 
 all: $(NAME)

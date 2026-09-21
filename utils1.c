@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/25 14:02:03 by diego             #+#    #+#             */
-/*   Updated: 2026/09/16 14:04:12 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/09/21 11:17:04 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	ft_wait_cooldown(t_dongle *dongle, long long t_remaining)
 
 void	norm_acquire_dongle(t_coder *coder, t_dongle *dongle)
 {
-	t_request		top;
+	t_request	top;
 	long long	timestamp;
 
 	while (is_simulation_running(coder->env))
