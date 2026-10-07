@@ -103,6 +103,7 @@ void		heap_init(t_heap *heap, int capacity);
 void		heap_push(t_heap *heap, t_request req, int scheduler_type);
 t_request	heap_pop(t_heap *heap, int scheduler_type);
 t_request	heap_peek(t_heap *heap);
+bool		heap_remove(t_heap *heap, int coder_id, int scheduler_type);
 void		heap_clear(t_heap *heap);
 void		acquire_dongle(t_coder *coder, t_dongle *dongle);
 bool		init_dongles(t_env *env);

@@ -21,7 +21,13 @@ void	release_dongle(t_coder *coder, t_dongle *dongle)
 	running = is_simulation_running(coder->env);
 	pthread_mutex_lock(&dongle->mutex);
 	if (running)
-		heap_pop(&dongle->heap, coder->env->scheduler_type);
+	{
+		if (coder->env->scheduler_type == 0)
+			heap_pop(&dongle->heap, coder->env->scheduler_type);
+		else
+			heap_remove(&dongle->heap, coder->id,
+				coder->env->scheduler_type);
+	}
 	dongle->is_in_use = false;
 	dongle->last_released_time = get_time_ms() - coder->env->start_time;
 	if (coder->env->cooldown > 0)

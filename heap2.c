@@ -39,6 +39,29 @@ t_request	heap_pop(t_heap *heap, int scheduler_type)
 	return (top);
 }
 
+bool	heap_remove(t_heap *heap, int coder_id, int scheduler_type)
+{
+	int	i;
+	int	last;
+
+	i = 0;
+	while (i < heap->size && heap->request[i].coder_id != coder_id)
+		i++;
+	if (i == heap->size)
+		return (false);
+	last = heap->size - 1;
+	heap->size--;
+	if (i == last)
+		return (true);
+	heap->request[i] = heap->request[last];
+	if (i > 0 && comp_requests(heap->request[i],
+			heap->request[(i - 1) / 2], scheduler_type))
+		heapify_up(heap, i, scheduler_type);
+	else
+		heapify_down(heap, i, scheduler_type);
+	return (true);
+}
+
 //ritorna la richiesta in cima senza rimuoverla
 t_request	heap_peek(t_heap *heap)
 {

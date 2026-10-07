@@ -73,7 +73,7 @@ void	heapify_down(t_heap *heap, int i, int scheduler_type)
 				heap->request[left], scheduler_type))
 			cld = right;
 		if (
-			comp_requests(heap->request[i], heap->request[cld], scheduler_type))
+			comp_requests(heap->request[cld], heap->request[i], scheduler_type))
 		{
 			tmp = heap->request[i];
 			heap->request[i] = heap->request[cld];
