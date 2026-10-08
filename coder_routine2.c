@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/15 10:17:47 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/09/18 12:13:47 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/10/08 16:27:27 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,12 @@ void	coder_compile(t_coder *coder)
 	if (!is_simulation_running(coder->env))
 		return ;
 	lock_both_dongles(coder);
-	pthread_mutex_lock(&coder->env->sim_mutex);
-	coder->last_compile_start = get_time_ms();
-	pthread_mutex_unlock(&coder->env->sim_mutex);
 	print_status(coder, "is compiling");
 	smart_sleep(coder->env->t_compile, coder->env);
+	pthread_mutex_lock(&coder->env->sim_mutex);
+	if (coder->env->simulation_running)
+		coder->deadline = get_time_ms() + coder->env->t_burnout;
+	pthread_mutex_unlock(&coder->env->sim_mutex);
 	release_both_dongle(coder);
 	complete_initial_phase(coder);
 }

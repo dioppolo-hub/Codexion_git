@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/25 10:08:27 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/10/08 15:40:43 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/10/08 16:25:52 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,6 @@ bool	norm_start_sim(t_env *env, pthread_t *threads, t_coder *coders)
 	i = 0;
 	while (i < env->num_coders)
 	{
-		coders[i].last_compile_start = env->start_time;
 		if (pthread_create(&threads[i], NULL, coder_routine, &coders[i]) != 0)
 		{
 			return (false);

@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/25 14:02:03 by diego             #+#    #+#             */
-/*   Updated: 2026/10/08 15:33:36 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/10/08 16:26:21 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,9 @@ void	lock_both_dongles(t_coder *coder)
 	right = coder->right_dongle;
 	req.coder_id = coder->id;
 	req.request_time = get_time_ms() - env->start_time;
-	req.deadline = coder->last_compile_start + env->t_burnout;
+	pthread_mutex_lock(&env->sim_mutex);
+	req.deadline = coder->deadline;
+	pthread_mutex_unlock(&env->sim_mutex);
 	pthread_mutex_lock(&env->pair_mutex);
 	heap_push(&env->pair_heap, req, env->scheduler_type);
 	while(is_simulation_running(env))
