@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/15 10:47:22 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/09/18 10:51:32 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/10/08 15:38:38 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,11 @@ bool	init_dongles(t_env *env)
 		env->dongles[i].id = i;
 		env->dongles[i].is_in_use = false;
 		env->dongles[i].last_released_time = 0;
+		env->dongles[i].available_at = 0;
 		if (pthread_mutex_init(&env->dongles[i].mutex, NULL) != 0)
 			return (false);
 		if (pthread_cond_init(&env->dongles[i].cond, NULL) != 0)
 			return (false);
-		heap_init(&env->dongles[i].heap, env->num_coders);
 		i++;
 	}
 	return (true);

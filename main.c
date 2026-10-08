@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/25 10:08:27 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/09/18 11:58:44 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/10/08 15:40:43 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,13 @@ void	cleanup(t_env *env, t_coder *coders)
 		{
 			pthread_mutex_destroy(&env->dongles[i].mutex);
 			pthread_cond_destroy(&env->dongles[i].cond);
-			heap_clear(&env->dongles[i].heap);
 			i++;
 		}
 		free(env->dongles);
 	}
+	heap_clear(&env->pair_heap);
+	pthread_mutex_destroy(&env->pair_mutex);
+	pthread_cond_destroy(&env->pair_cond);
 	pthread_mutex_destroy(&env->write_mutex);
 	pthread_mutex_destroy(&env->sim_mutex);
 	pthread_cond_destroy(&env->start_cond);
@@ -90,7 +92,10 @@ static int	init_and_setup(int argc, char **argv, t_env *env, t_coder **coders)
 	pthread_mutex_init(&env->write_mutex, NULL);
 	pthread_mutex_init(&env->sim_mutex, NULL);
 	pthread_mutex_init(&env->start_mutex, NULL);
+	pthread_mutex_init(&env->pair_mutex, NULL);
+	pthread_cond_init(&env->pair_cond, NULL);
 	pthread_cond_init(&env->start_cond, NULL);
+	heap_init(&env->pair_heap, env->num_coders);
 	env->initial_phase = 0;
 	env->phase_completed = 0;
 	if (env->num_coders == 1)

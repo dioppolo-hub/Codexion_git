@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/25 10:04:17 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/10/01 11:18:33 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/10/08 15:47:48 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ typedef struct s_dongle
 	int				id;
 	bool			is_in_use;
 	long long		last_released_time;
+	long long		available_at;
 	t_heap			heap;
 }	t_dongle;
 
@@ -69,9 +70,12 @@ typedef struct s_env
 	int				phase_count;
 	pthread_mutex_t	start_mutex;
 	pthread_cond_t	start_cond;
+	pthread_mutex_t	pair_mutex;
+	pthread_cond_t	pair_cond;
 	pthread_mutex_t	write_mutex;
 	pthread_mutex_t	sim_mutex;
 	t_dongle		*dongles;
+	t_heap			pair_heap;
 }	t_env;
 
 typedef struct s_coder
@@ -105,11 +109,8 @@ t_request	heap_pop(t_heap *heap, int scheduler_type);
 t_request	heap_peek(t_heap *heap);
 bool		heap_remove(t_heap *heap, int coder_id, int scheduler_type);
 void		heap_clear(t_heap *heap);
-void		acquire_dongle(t_coder *coder, t_dongle *dongle);
 bool		init_dongles(t_env *env);
 t_coder		*init_coders(t_env *env);
-void		release_dongle(t_coder *coder, t_dongle *dongle);
-void		norm_acquire_dongle(t_coder *coder, t_dongle *dongle);
 void		release_both_dongle(t_coder *coder);
 long long	get_time_ms(void);
 void		print_status(t_coder *coder, char *status);
@@ -122,10 +123,9 @@ void		*coder_routine(void *arg);
 bool		check_coder_burnout(t_coder *coder);
 bool		check_all_finished(t_coder *coders, t_env *env);
 void		*monitor_routine(void *arg);
-void		ft_wait_cooldown(t_dongle *dongle, long long t_remaining);
 void		stop_simulation(t_env *env);
-void		lock_both_dongles(t_coder *coder);
 void		wait_initial_phase(t_coder *coder);
 void		complete_initial_phase(t_coder *coder);
+void		lock_both_dongles(t_coder *coder);
 
 #endif
