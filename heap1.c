@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/18 14:55:55 by diego             #+#    #+#             */
-/*   Updated: 2026/09/15 12:21:56 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/10/09 10:10:15 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ int	comp_requests(t_request a, t_request b, int scheduler_type)
 	{
 		if (a.deadline != b.deadline)
 			return (a.deadline < b.deadline);
+		if (a.request_time != b.request_time)
+			return (a.request_time < b.request_time);
 	}
 	return (a.coder_id < b.coder_id);
 }

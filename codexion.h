@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/25 10:04:17 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/10/08 16:25:09 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/10/09 10:12:22 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ typedef struct s_coder
 	int			id;
 	int			compile_count;
 	long long	deadline;
+	bool		deadline_active;
 	bool		init_acq_done;
 	t_env		*env;
 	t_dongle	*left_dongle;

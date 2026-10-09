@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/30 14:28:55 by diego             #+#    #+#             */
-/*   Updated: 2026/10/08 16:29:55 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/10/09 10:12:11 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,13 +19,16 @@ bool	check_coder_burnout(t_coder *coder)
 	long long	now;
 	long long	deadline;
 	int			compile_count;
+	bool		deadline_active;
 
 	pthread_mutex_lock(&coder->env->sim_mutex);
 	now = get_time_ms();
 	deadline = coder->deadline;
+	deadline_active = coder->deadline_active;
 	compile_count = coder->compile_count;
 	pthread_mutex_unlock(&coder->env->sim_mutex);
-	if (now > deadline && compile_count < coder->env->req_compiles)
+	if (deadline_active && now > deadline
+		&& compile_count < coder->env->req_compiles)
 	{
 		stop_simulation(coder->env);
 		pthread_mutex_lock(&coder->env->write_mutex);
