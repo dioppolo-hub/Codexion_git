@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/25 10:43:25 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/09/15 10:06:59 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/10/14 10:55:43 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ bool	parce_t_refactor(char *t_refactor)
 	if (!is_valid_int(t_refactor, true))
 		return (false);
 	x = atoi(t_refactor);
-	if (x < 0)
+	if (x < 0 || (x == 0 && strcmp(t_refactor, "0")))
 		return (false);
 	else if (x > INT_MAX)
 		return (false);
@@ -49,7 +49,7 @@ bool	parce_dongle_cool(char *d_cooldown)
 	if (!is_valid_int(d_cooldown, true))
 		return (false);
 	x = atoi(d_cooldown);
-	if (x < 0)
+	if (x < 0 || (x == 0 && strcmp(d_cooldown, "0")))
 		return (false);
 	else if (x > INT_MAX)
 		return (false);

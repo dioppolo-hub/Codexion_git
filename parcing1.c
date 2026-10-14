@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/25 10:09:14 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/09/15 10:23:09 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/10/14 10:53:37 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ bool	parce_t_debug(char *t_debug)
 	if (!is_valid_int(t_debug, true))
 		return (false);
 	x = atoi(t_debug);
-	if (x < 0)
+	if (x < 0 || x == 0 && strcmp(t_debug, "0") != 0)
 		return (false);
 	else if (x > INT_MAX)
 		return (false);
