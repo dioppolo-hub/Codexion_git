@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/25 14:02:03 by diego             #+#    #+#             */
-/*   Updated: 2026/10/08 16:26:21 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/10/14 10:35:28 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,16 +17,6 @@
 //se è il suo turno in cima
 //se il cooldown è finito break
 //se non è il primo in coda si mette in attesa
-static void	wait_pair_cooldown(t_env *env, long long remaining)
-{
-	long long		wake_time;
-	struct timespec	ts;
-
-	wake_time = get_time_ms() + remaining;
-	ts.tv_sec = wake_time / 1000;
-	ts.tv_nsec = (wake_time % 1000) * 1000000;
-	pthread_cond_timedwait(&env->pair_cond, &env->pair_mutex, &ts);
-}
 
 static void	log_both_dongles(t_coder *coder)
 {
@@ -44,49 +34,53 @@ static void	log_both_dongles(t_coder *coder)
 	pthread_mutex_unlock(&coder->env->write_mutex);
 }
 
+static t_request	make_pair_request(t_coder *coder)
+{
+	t_request	req;
 
-void	lock_both_dongles(t_coder *coder)
+	req.coder_id = coder->id;
+	req.request_time = get_time_ms() - coder->env->start_time;
+	pthread_mutex_lock(&coder->env->sim_mutex);
+	req.deadline = coder->deadline;
+	pthread_mutex_unlock(&coder->env->sim_mutex);
+	return (req);
+}
+
+static long long	get_pair_ready_at(t_coder *coder)
+{
+	if (coder->right_dongle->available_at
+		> coder->left_dongle->available_at)
+		return (coder->right_dongle->available_at);
+	return (coder->left_dongle->available_at);
+}
+
+static bool	pair_is_free(t_coder *coder)
+{
+	return (!coder->left_dongle->is_in_use
+		&& !coder->right_dongle->is_in_use);
+}
+
+void	lock_both_dongles(t_coder *coder, long long rdy_at, long long rem)
 {
 	t_env		*env;
-	t_dongle	*left;
-	t_dongle	*right;
 	t_request	req;
 	t_request	top;
-	long long	ready_at;
-	long long	remaining;
 
 	env = coder->env;
-	left = coder->left_dongle;
-	right = coder->right_dongle;
-	req.coder_id = coder->id;
-	req.request_time = get_time_ms() - env->start_time;
-	pthread_mutex_lock(&env->sim_mutex);
-	req.deadline = coder->deadline;
-	pthread_mutex_unlock(&env->sim_mutex);
+	req = make_pair_request(coder);
 	pthread_mutex_lock(&env->pair_mutex);
 	heap_push(&env->pair_heap, req, env->scheduler_type);
-	while(is_simulation_running(env))
+	while (is_simulation_running(env))
 	{
 		top = heap_peek(&env->pair_heap);
-		ready_at = left->available_at;
-		if (right->available_at > ready_at)
-			ready_at = right->available_at;
-		remaining = ready_at - get_time_ms();
-		if (top.coder_id == coder->id
-			&& !left->is_in_use && !right->is_in_use
-			&& remaining <= 0)
+		rdy_at = get_pair_ready_at(coder);
+		rem = rdy_at - get_time_ms();
+		if (is_pair_turn(coder, top) && rem <= 0)
 		{
-			heap_pop(&env->pair_heap, env->scheduler_type);
-			left->is_in_use = true;
-			right->is_in_use = true;
-			pthread_cond_broadcast(&env->pair_cond);
+			grant_pair(coder);
 			break ;
 		}
-		if (top.coder_id == coder->id && remaining > 0
-			&& !left->is_in_use && !right->is_in_use)
-			wait_pair_cooldown(env, remaining);
-		else
-			pthread_cond_wait(&env->pair_cond, &env->pair_mutex);
+		check_pair_turn(coder, rem, top);
 	}
 	if (!is_simulation_running(env))
 		heap_remove(&env->pair_heap, coder->id, env->scheduler_type);

@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/15 10:47:22 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/10/09 10:12:08 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/10/14 10:07:27 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,17 @@ bool	init_dongles(t_env *env)
 		i++;
 	}
 	return (true);
+}
+
+void	trhread_init(t_env *env)
+{
+	pthread_mutex_init(&env->write_mutex, NULL);
+	pthread_mutex_init(&env->sim_mutex, NULL);
+	pthread_mutex_init(&env->start_mutex, NULL);
+	pthread_mutex_init(&env->pair_mutex, NULL);
+	pthread_cond_init(&env->pair_cond, NULL);
+	pthread_cond_init(&env->start_cond, NULL);
+	heap_init(&env->pair_heap, env->num_coders);
 }
 
 t_coder	*init_coders(t_env *env)

@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/15 10:17:47 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/10/09 10:12:18 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/10/14 10:35:43 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void	coder_compile(t_coder *coder)
 		coder->deadline_active = true;
 	}
 	pthread_mutex_unlock(&coder->env->sim_mutex);
-	lock_both_dongles(coder);
+	lock_both_dongles(coder, 0, 0);
 	print_status(coder, "is compiling");
 	smart_sleep(coder->env->t_compile, coder->env);
 	pthread_mutex_lock(&coder->env->sim_mutex);
@@ -75,4 +75,15 @@ void	*coder_routine(void *arg)
 			break ;
 	}
 	return (NULL);
+}
+
+void	wait_pair_cooldown(t_env *env, long long remaining)
+{
+	long long		wake_time;
+	struct timespec	ts;
+
+	wake_time = get_time_ms() + remaining;
+	ts.tv_sec = wake_time / 1000;
+	ts.tv_nsec = (wake_time % 1000) * 1000000;
+	pthread_cond_timedwait(&env->pair_cond, &env->pair_mutex, &ts);
 }

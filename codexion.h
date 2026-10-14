@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/25 10:04:17 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/10/09 10:12:22 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/10/14 10:36:28 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,7 @@ typedef struct s_coder
 	t_dongle	*right_dongle;
 }	t_coder;
 
+void		trhread_init(t_env *env);
 bool		parcing_1(int argc, char **argv, t_env *env);
 bool		norm_start_sim(t_env *env, pthread_t *threads, t_coder *coders);
 bool		parce_n_coders(char *n_coder);
@@ -127,6 +128,10 @@ void		*monitor_routine(void *arg);
 void		stop_simulation(t_env *env);
 void		wait_initial_phase(t_coder *coder);
 void		complete_initial_phase(t_coder *coder);
-void		lock_both_dongles(t_coder *coder);
+void		lock_both_dongles(t_coder *coder, long long rdy_at, long long rem);
+void		wait_pair_cooldown(t_env *env, long long remaining);
+void		check_pair_turn(t_coder *coder, long long rem, t_request top);
+bool		is_pair_turn(t_coder *coder, t_request top);
+void		grant_pair(t_coder *coder);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: dioppolo <dioppolo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/25 10:08:27 by dioppolo          #+#    #+#             */
-/*   Updated: 2026/10/08 16:25:52 by dioppolo         ###   ########.fr       */
+/*   Updated: 2026/10/14 10:07:52 by dioppolo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,13 +88,7 @@ static int	init_and_setup(int argc, char **argv, t_env *env, t_coder **coders)
 		printf("Error: Invalid argumets\n");
 		return (0);
 	}
-	pthread_mutex_init(&env->write_mutex, NULL);
-	pthread_mutex_init(&env->sim_mutex, NULL);
-	pthread_mutex_init(&env->start_mutex, NULL);
-	pthread_mutex_init(&env->pair_mutex, NULL);
-	pthread_cond_init(&env->pair_cond, NULL);
-	pthread_cond_init(&env->start_cond, NULL);
-	heap_init(&env->pair_heap, env->num_coders);
+	trhread_init(env);
 	env->initial_phase = 0;
 	env->phase_completed = 0;
 	if (env->num_coders == 1)
