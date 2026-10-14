@@ -131,6 +131,7 @@ void		complete_initial_phase(t_coder *coder);
 void		lock_both_dongles(t_coder *coder, long long rdy_at, long long rem);
 void		wait_pair_cooldown(t_env *env, long long remaining);
 void		check_pair_turn(t_coder *coder, long long rem, t_request top);
+bool		pair_is_free(t_coder *coder);
 bool		is_pair_turn(t_coder *coder, t_request top);
 void		grant_pair(t_coder *coder);
 

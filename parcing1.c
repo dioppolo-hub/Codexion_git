@@ -64,7 +64,7 @@ bool	parce_t_debug(char *t_debug)
 	if (!is_valid_int(t_debug, true))
 		return (false);
 	x = atoi(t_debug);
-	if (x < 0 || x == 0 && strcmp(t_debug, "0") != 0)
+	if (x < 0 || (x == 0 && strcmp(t_debug, "0") != 0))
 		return (false);
 	else if (x > INT_MAX)
 		return (false);

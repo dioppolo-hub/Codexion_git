@@ -54,7 +54,7 @@ static long long	get_pair_ready_at(t_coder *coder)
 	return (coder->left_dongle->available_at);
 }
 
-static bool	pair_is_free(t_coder *coder)
+bool	pair_is_free(t_coder *coder)
 {
 	return (!coder->left_dongle->is_in_use
 		&& !coder->right_dongle->is_in_use);
