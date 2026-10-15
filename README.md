@@ -79,7 +79,3 @@ These locks and predicate-checking loops prevent unsynchronized updates to share
 - [The Open Group Base Specifications: pthread mutex functions](https://pubs.opengroup.org/onlinepubs/9699919799/functions/pthread_mutex_lock.html)
 - [The Open Group Base Specifications: pthread condition variables](https://pubs.opengroup.org/onlinepubs/9699919799/functions/pthread_cond_wait.html)
 - Dijkstra, E. W., [Cooperating Sequential Processes](https://www.cs.utexas.edu/users/EWD/transcriptions/EWD01xx/EWD123.html), background on synchronization and resource sharing.
-
-### AI use
-
-AI assistance was used to draft and organize this README and to cross-check its descriptions of build/run usage, scheduling, and synchronization against the project source files. AI was not used to implement or modify the C simulation as part of this README task.
